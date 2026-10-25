@@ -20,7 +20,7 @@ def parse_syslog_line(line: str, line_number: int) -> Optional[Dict[str, Any]]:
 
     timestamp_str, hostname, service, pid, message = match.groups()
     sanitized_text, _ = sanitize_line(line)
-    
+
     # Extract IP if present
     ip_match = IP_PATTERN.search(message)
     ip = ip_match.group(0) if ip_match else None
@@ -28,7 +28,17 @@ def parse_syslog_line(line: str, line_number: int) -> Optional[Dict[str, Any]]:
     # Detect level
     msg_upper = message.upper()
     level = "INFO"
-    if any(k in msg_upper for k in ["CRITICAL", "PANIC", "EMERGENCY", "OOM-KILLER"]):
+    critical_markers = [
+        "CRITICAL",
+        "PANIC",
+        "EMERGENCY",
+        "OOM-KILLER",
+        "OUT OF MEMORY",
+        "OUT-OF-MEMORY",
+        "KILL PROCESS",
+        "OOM",
+    ]
+    if any(k in msg_upper for k in critical_markers):
         level = "CRITICAL"
     elif any(k in msg_upper for k in ["ERROR", "ERR", "FAIL", "FAILED"]):
         level = "ERROR"
