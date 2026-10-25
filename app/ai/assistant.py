@@ -4,7 +4,7 @@ Summarizes related log events, analyzes root cause, and provides safe remediatio
 Uses Google Gemini API when configured, with a local defensive rule-based engine fallback.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from app.config import settings
 from app.ai.sanitization import sanitize_batch_for_ai
 
@@ -15,7 +15,7 @@ def investigate_incident(
     category: str,
     evidence: List[str],
     rule_explanation: str = "",
-    log_excerpts: List[str] = None
+    log_excerpts: Optional[List[str]] = None
 ) -> Dict[str, Any]:
     excerpts = log_excerpts or []
     sanitized_text, masked_count = sanitize_batch_for_ai(evidence + excerpts[:20])

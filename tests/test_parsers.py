@@ -46,3 +46,12 @@ def test_json_log_parser():
     assert entry["level"] == "ERROR"
     assert entry["service"] == "auth-svc"
     assert entry["ip"] == "10.0.0.1"
+
+
+def test_syslog_parser():
+    line = "Oct 25 14:16:35 app-node-03 kernel: [ 4215.112] Out of memory: Kill process 3912 (python3) score 892"
+    entry = parse_syslog_line(line, 5)
+    assert entry is not None
+    assert entry["source"] == "syslog"
+    assert entry["level"] == "CRITICAL"
+    assert entry["service"] == "kernel"

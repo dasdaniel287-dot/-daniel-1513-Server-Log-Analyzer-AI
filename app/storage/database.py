@@ -3,11 +3,19 @@ Database Setup & Session Management
 Lightweight local SQLite default or optional PostgreSQL.
 """
 
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.config import settings
 
-# If sqlite, pass check_same_thread=False
+# If sqlite with a file path, ensure target directory exists
+if settings.DATABASE_URL.startswith("sqlite:///"):
+    db_path = settings.DATABASE_URL.replace("sqlite:///", "")
+    if db_path and db_path != ":memory:":
+        db_dir = os.path.dirname(db_path)
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
+
 connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
 
 engine = create_engine(
