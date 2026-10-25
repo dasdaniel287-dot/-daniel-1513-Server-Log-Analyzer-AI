@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: server-log-analyzer-ai
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - DATABASE_URL=sqlite:///./data/logs.db
+      - MAX_UPLOAD_SIZE_MB=50
+    volumes:
+      - ./data:/app/data
+      - ./sample_logs:/app/sample_logs:ro
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
